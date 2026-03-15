@@ -1,0 +1,61 @@
+{
+  "market": {
+    "symbol": "BTCUSDT",
+    "interval": "5m",
+    "backfill_limit": 500,
+    "max_candles": 500,
+    "min_required_candles": 80
+  },
+  "openclaw": {
+    "url": "http://127.0.0.1:18789/hooks/agent",
+    "token": "CHANGE_ME",
+    "name": "BTCMonitor",
+    "session_key_prefix": "hook:market:",
+    "deliver": true,
+    "channel": "last",
+    "wake_mode": "now",
+    "timeout_seconds": 20
+  },
+  "rules": [
+    {
+      "id": "trend_bullish_stack",
+      "title": "趋势延续多头",
+      "type": "combo",
+      "cooldown_secs": 1800,
+      "all_of": [
+        {
+          "type": "sma_cross",
+          "fast": 9,
+          "slow": 20,
+          "direction": "bullish"
+        },
+        {
+          "type": "rsi_threshold",
+          "overbought": 60
+        },
+        {
+          "type": "volume_spike",
+          "multiple": 1.5
+        }
+      ]
+    },
+    {
+      "id": "trend_bearish_stack",
+      "title": "趋势延续空头",
+      "type": "combo",
+      "cooldown_secs": 1800,
+      "all_of": [
+        {
+          "type": "sma_cross",
+          "fast": 9,
+          "slow": 20,
+          "direction": "bearish"
+        },
+        {
+          "type": "volume_spike",
+          "multiple": 1.5
+        }
+      ]
+    }
+  ]
+}

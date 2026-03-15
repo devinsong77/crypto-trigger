@@ -1,0 +1,51 @@
+{
+  "market": {
+    "symbol": "BTCUSDT",
+    "interval": "15m",
+    "backfill_limit": 500,
+    "max_candles": 500,
+    "min_required_candles": 80
+  },
+  "openclaw": {
+    "url": "http://127.0.0.1:18789/hooks/agent",
+    "token": "CHANGE_ME",
+    "name": "BTCMonitor",
+    "session_key_prefix": "hook:market:",
+    "deliver": true,
+    "channel": "last",
+    "wake_mode": "now",
+    "timeout_seconds": 20
+  },
+  "rules": [
+    {
+      "id": "oversold_reversal",
+      "title": "超卖反弹观察",
+      "type": "combo",
+      "cooldown_secs": 3600,
+      "all_of": [
+        {
+          "type": "rsi_threshold",
+          "oversold": 30
+        },
+        {
+          "type": "bollinger_break"
+        }
+      ]
+    },
+    {
+      "id": "overbought_pullback",
+      "title": "超买回落观察",
+      "type": "combo",
+      "cooldown_secs": 3600,
+      "all_of": [
+        {
+          "type": "rsi_threshold",
+          "overbought": 70
+        },
+        {
+          "type": "bollinger_break"
+        }
+      ]
+    }
+  ]
+}
