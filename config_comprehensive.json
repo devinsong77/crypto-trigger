@@ -1,0 +1,296 @@
+{
+  "markets": [
+    {
+      "symbol": "BTCUSDT",
+      "interval": "15m",
+      "backfill_limit": 500,
+      "max_candles": 500,
+      "min_required_candles": 60
+    },
+    {
+      "symbol": "ETHUSDT",
+      "interval": "15m",
+      "backfill_limit": 500,
+      "max_candles": 500,
+      "min_required_candles": 60
+    },
+    {
+      "symbol": "SOLUSDT",
+      "interval": "15m",
+      "backfill_limit": 500,
+      "max_candles": 500,
+      "min_required_candles": 60
+    },
+    {
+      "symbol": "BNBUSDT",
+      "interval": "15m",
+      "backfill_limit": 500,
+      "max_candles": 500,
+      "min_required_candles": 60
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "interval": "15m",
+      "backfill_limit": 500,
+      "max_candles": 500,
+      "min_required_candles": 60
+    }
+  ],
+  "openclaw": {
+    "url": "http://127.0.0.1:18789/hooks/agent",
+    "token": "OPENCLAW_WEB_HOOK_20260315",
+    "name": "综合加密货币监控系统",
+    "session_key_prefix": "agent:crypto-research:feishu:group:",
+    "deliver": true,
+    "channel": "last",
+    "wake_mode": "now",
+    "timeout_seconds": 20
+  },
+  "rules": [
+    {
+      "id": "price_change_quick_up",
+      "title": "快速上涨警告",
+      "type": "price_change_pct",
+      "lookback_bars": 3,
+      "threshold_pct": 1.5,
+      "direction": "up",
+      "cooldown_secs": 600
+    },
+    {
+      "id": "price_change_quick_down",
+      "title": "快速下跌警告",
+      "type": "price_change_pct",
+      "lookback_bars": 3,
+      "threshold_pct": 1.5,
+      "direction": "down",
+      "cooldown_secs": 600
+    },
+    {
+      "id": "price_change_significant_up",
+      "title": "显著上涨",
+      "type": "price_change_pct",
+      "lookback_bars": 5,
+      "threshold_pct": 2.5,
+      "direction": "up",
+      "cooldown_secs": 900
+    },
+    {
+      "id": "price_change_significant_down",
+      "title": "显著下跌",
+      "type": "price_change_pct",
+      "lookback_bars": 5,
+      "threshold_pct": 2.5,
+      "direction": "down",
+      "cooldown_secs": 900
+    },
+    {
+      "id": "rsi_oversold",
+      "title": "RSI 超卖 - 可能反弹",
+      "type": "rsi_threshold",
+      "oversold": 30,
+      "cooldown_secs": 1200
+    },
+    {
+      "id": "rsi_overbought",
+      "title": "RSI 超买 - 可能回调",
+      "type": "rsi_threshold",
+      "overbought": 70,
+      "cooldown_secs": 1200
+    },
+    {
+      "id": "macd_bullish_cross",
+      "title": "MACD 金叉 - 看多信号",
+      "type": "macd_cross",
+      "direction": "bullish",
+      "cooldown_secs": 1800
+    },
+    {
+      "id": "macd_bearish_cross",
+      "title": "MACD 死叉 - 看空信号",
+      "type": "macd_cross",
+      "direction": "bearish",
+      "cooldown_secs": 1800
+    },
+    {
+      "id": "bollinger_upper_break",
+      "title": "布林上轨突破 - 强势看多",
+      "type": "bollinger_break",
+      "direction": "upper",
+      "cooldown_secs": 1200
+    },
+    {
+      "id": "bollinger_lower_break",
+      "title": "布林下轨突破 - 强势看空",
+      "type": "bollinger_break",
+      "direction": "lower",
+      "cooldown_secs": 1200
+    },
+    {
+      "id": "sma_bullish_cross_9_20",
+      "title": "SMA(9) 上穿 SMA(20) - 短期向上",
+      "type": "sma_cross",
+      "fast": 9,
+      "slow": 20,
+      "direction": "bullish",
+      "cooldown_secs": 1800
+    },
+    {
+      "id": "sma_bearish_cross_9_20",
+      "title": "SMA(9) 下穿 SMA(20) - 短期向下",
+      "type": "sma_cross",
+      "fast": 9,
+      "slow": 20,
+      "direction": "bearish",
+      "cooldown_secs": 1800
+    },
+    {
+      "id": "sma_bullish_cross_20_50",
+      "title": "SMA(20) 上穿 SMA(50) - 中期向上",
+      "type": "sma_cross",
+      "fast": 20,
+      "slow": 50,
+      "direction": "bullish",
+      "cooldown_secs": 2400
+    },
+    {
+      "id": "sma_bearish_cross_20_50",
+      "title": "SMA(20) 下穿 SMA(50) - 中期向下",
+      "type": "sma_cross",
+      "fast": 20,
+      "slow": 50,
+      "direction": "bearish",
+      "cooldown_secs": 2400
+    },
+    {
+      "id": "volume_spike_strong",
+      "title": "成交量突增 - 力度确认",
+      "type": "volume_spike",
+      "multiple": 2.5,
+      "cooldown_secs": 1200
+    },
+    {
+      "id": "momentum_short_up",
+      "title": "短线向上动量",
+      "type": "combo",
+      "cooldown_secs": 900,
+      "all_of": [
+        {
+          "type": "price_change_pct",
+          "lookback_bars": 3,
+          "threshold_pct": 0.8,
+          "direction": "up"
+        },
+        {
+          "type": "volume_spike",
+          "multiple": 2.0
+        }
+      ]
+    },
+    {
+      "id": "momentum_short_down",
+      "title": "短线向下动量",
+      "type": "combo",
+      "cooldown_secs": 900,
+      "all_of": [
+        {
+          "type": "price_change_pct",
+          "lookback_bars": 3,
+          "threshold_pct": 0.8,
+          "direction": "down"
+        },
+        {
+          "type": "volume_spike",
+          "multiple": 2.0
+        }
+      ]
+    },
+    {
+      "id": "trend_bullish_stack",
+      "title": "趋势延续多头 - 强力确认",
+      "type": "combo",
+      "cooldown_secs": 1800,
+      "all_of": [
+        {
+          "type": "sma_cross",
+          "fast": 9,
+          "slow": 20,
+          "direction": "bullish"
+        },
+        {
+          "type": "rsi_threshold",
+          "overbought": 60
+        },
+        {
+          "type": "volume_spike",
+          "multiple": 1.5
+        }
+      ]
+    },
+    {
+      "id": "trend_bearish_stack",
+      "title": "趋势延续空头 - 强力确认",
+      "type": "combo",
+      "cooldown_secs": 1800,
+      "all_of": [
+        {
+          "type": "sma_cross",
+          "fast": 9,
+          "slow": 20,
+          "direction": "bearish"
+        },
+        {
+          "type": "volume_spike",
+          "multiple": 1.5
+        }
+      ]
+    },
+    {
+      "id": "oversold_reversal",
+      "title": "超卖反弹观察 - 底部信号",
+      "type": "combo",
+      "cooldown_secs": 3600,
+      "all_of": [
+        {
+          "type": "rsi_threshold",
+          "oversold": 30
+        },
+        {
+          "type": "bollinger_break"
+        }
+      ]
+    },
+    {
+      "id": "overbought_pullback",
+      "title": "超买回落观察 - 顶部信号",
+      "type": "combo",
+      "cooldown_secs": 3600,
+      "all_of": [
+        {
+          "type": "rsi_threshold",
+          "overbought": 70
+        },
+        {
+          "type": "bollinger_break"
+        }
+      ]
+    },
+    {
+      "id": "bullish_recovery_setup",
+      "title": "看涨复苏信号 - 底部反弹预期",
+      "type": "combo",
+      "cooldown_secs": 1800,
+      "all_of": [
+        {
+          "type": "rsi_threshold",
+          "oversold": 35
+        },
+        {
+          "type": "price_change_pct",
+          "lookback_bars": 5,
+          "threshold_pct": 2.0,
+          "direction": "down"
+        }
+      ]
+    }
+  ]
+}
