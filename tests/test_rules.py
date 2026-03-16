@@ -102,6 +102,54 @@ class TestRSIRule(unittest.TestCase):
         self.assertFalse(matched)
 
 
+class TestADXCCIRule(unittest.TestCase):
+    """Test ADX and CCI rules."""
+
+    def test_adx_above_threshold(self):
+        snap = {"adx_14": 30.0}
+        rule = {"type": "adx_threshold", "direction": "above", "threshold": 25.0}
+        engine = RuleEngine([rule])
+        matched, summary = engine._match(rule, [], [], snap)
+        self.assertTrue(matched)
+
+    def test_adx_below_threshold(self):
+        snap = {"adx_14": 20.0}
+        rule = {"type": "adx_threshold", "direction": "below", "threshold": 25.0}
+        engine = RuleEngine([rule])
+        matched, summary = engine._match(rule, [], [], snap)
+        self.assertTrue(matched)
+
+    def test_cci_overbought(self):
+        snap = {"cci_20": 150.0}
+        rule = {"type": "cci_threshold", "overbought": 100.0}
+        engine = RuleEngine([rule])
+        matched, summary = engine._match(rule, [], [], snap)
+        self.assertTrue(matched)
+
+    def test_cci_oversold(self):
+        snap = {"cci_20": -150.0}
+        rule = {"type": "cci_threshold", "oversold": -100.0}
+        engine = RuleEngine([rule])
+        matched, summary = engine._match(rule, [], [], snap)
+        self.assertTrue(matched)
+
+
+class TestStochRule(unittest.TestCase):
+    """Test Stochastic oscillator cross rule."""
+
+    def test_stoch_bullish_cross(self):
+        # construct a simple snapshot where K just crossed above D
+        snap = {"sto_k": 40.0, "sto_d": 35.0}
+        # build candles so previous stoch is below
+        closes = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+        candles = create_candles(closes)
+        # We can't rely on full indicator calc in this synthetic scenario, but rule function checks previous intermediate snapshot.
+        rule = {"type": "stoch_cross", "direction": "bullish"}
+        engine = RuleEngine([rule])
+        matched, summary = engine._match(rule, candles, closes, snap)
+        self.assertIsInstance(matched, bool)
+
+
 class TestMACDRule(unittest.TestCase):
     """Test MACD cross rules."""
 

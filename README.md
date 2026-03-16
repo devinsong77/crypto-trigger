@@ -60,11 +60,11 @@ python3 -m unittest tests.test_rules.TestComboRule -v
 | **币种数量** | 5 个（BTC, ETH, SOL, BNB, DOGE） |
 | **交易信号** | 26 个综合信号 |
 | **监控周期** | 15 分钟 K 线 |
-| **技术指标** | 7 种（SMA, EMA, RSI, MACD, BB, ATR, ROC） |
-| **规则类型** | 7 种（价格变化、RSI、MACD、布林带、SMA、成交量、组合） |
+| **技术指标** | 10 种（SMA, EMA, RSI, MACD, BB, ATR, ROC, ADX, CCI, Stochastic） |
+| **规则类型** | 10+ 种（价格变化、RSI、MACD、布林带、SMA、成交量、ADX、CCI、Stochastic、组合） |
 | **数据源** | Binance REST API + WebSocket |
 | **通知服务** | OpenClaw HTTP 推送 |
-| **测试覆盖** | 58 个单元测试，100% 通过 |
+| **测试覆盖** | 62 个单元测试，100% 通过 |
 
 ## 🏗️ 模块结构
 

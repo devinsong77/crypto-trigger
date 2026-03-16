@@ -27,8 +27,12 @@ async def run_monitors(services: List[MonitorService]) -> None:
 def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="BTCUSDT monitor for OpenClaw")
-    parser.add_argument("--config", default="config_comprehensive.json", help="Path to JSON config")
-    parser.add_argument("--log-level", default="INFO", help="DEBUG / INFO / WARNING / ERROR")
+    parser.add_argument(
+        "--config", default="config_comprehensive.json", help="Path to JSON config"
+    )
+    parser.add_argument(
+        "--log-level", default="INFO", help="DEBUG / INFO / WARNING / ERROR"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -42,7 +46,10 @@ def main() -> None:
     if "markets" in cfg:
         # New format: run multiple monitors
         markets = cfg["markets"]
-        services = [MonitorService(cfg, market["symbol"], market.get("interval", "1m")) for market in markets]
+        services = [
+            MonitorService(cfg, market["symbol"], market.get("interval", "1m"))
+            for market in markets
+        ]
         try:
             asyncio.run(run_monitors(services))
         except KeyboardInterrupt:

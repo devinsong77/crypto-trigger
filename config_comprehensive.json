@@ -291,6 +291,29 @@
           "direction": "down"
         }
       ]
+    },
+    {
+      "id": "adx_trend_strength",
+      "title": "ADX 趋势强度 - 25 以上为强趋势",
+      "type": "adx_threshold",
+      "direction": "above",
+      "threshold": 25.0,
+      "cooldown_secs": 1800
+    },
+    {
+      "id": "cci_overbought_oversold",
+      "title": "CCI 超买超卖",
+      "type": "cci_threshold",
+      "overbought": 100.0,
+      "oversold": -100.0,
+      "cooldown_secs": 1800
+    },
+    {
+      "id": "stoch_cross_signal",
+      "title": "Stochastic K/D 金叉死叉",
+      "type": "stoch_cross",
+      "direction": "either",
+      "cooldown_secs": 1800
     }
   ]
 }

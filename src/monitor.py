@@ -24,7 +24,9 @@ class MonitorService:
         # Support both single market (old format) and multiple markets (new format)
         if "markets" in cfg:
             # New format: multiple markets
-            market_cfg = next((m for m in cfg["markets"] if m["symbol"].upper() == symbol), None)
+            market_cfg = next(
+                (m for m in cfg["markets"] if m["symbol"].upper() == symbol), None
+            )
             if not market_cfg:
                 raise ValueError(f"Market {symbol} not found in configuration")
             market = market_cfg
@@ -32,14 +34,22 @@ class MonitorService:
             # Old format: single market
             market = cfg["market"]
             symbol = market["symbol"].upper() if not symbol else symbol
-            interval = market.get("interval", market.get("interval", "1m")) if not interval else interval
+            interval = (
+                market.get("interval", market.get("interval", "1m"))
+                if not interval
+                else interval
+            )
 
         self.symbol = symbol if isinstance(symbol, str) else market["symbol"].upper()
         self.interval = (
-            interval if isinstance(interval, str) else market.get("interval", market.get("interval", "1m"))
+            interval
+            if isinstance(interval, str)
+            else market.get("interval", market.get("interval", "1m"))
         )
         self.max_candles = int(market.get("max_candles", 500))
-        self.binance = BinanceSource(self.symbol, self.interval, market.get("backfill_limit", 500))
+        self.binance = BinanceSource(
+            self.symbol, self.interval, market.get("backfill_limit", 500)
+        )
         self.candles: Deque[Candle] = deque(maxlen=self.max_candles)
         self.notifier = OpenClawNotifier(cfg["openclaw"])
         self.rules = RuleEngine(cfg["rules"])
@@ -50,7 +60,9 @@ class MonitorService:
         history = self.binance.fetch_backfill()
         for candle in history:
             self.candles.append(candle)
-        LOG.info("Loaded %s candles for %s %s", len(self.candles), self.symbol, self.interval)
+        LOG.info(
+            "Loaded %s candles for %s %s", len(self.candles), self.symbol, self.interval
+        )
 
     def _upsert_candle(self, c: Candle) -> None:
         """Update last candle or append new one."""
@@ -59,7 +71,9 @@ class MonitorService:
         else:
             self.candles.append(c)
 
-    def _format_message(self, events: List[Dict[str, Any]], snap: Dict[str, float]) -> Tuple[str, str]:
+    def _format_message(
+        self, events: List[Dict[str, Any]], snap: Dict[str, float]
+    ) -> Tuple[str, str]:
         """
         Format multiple events into a single message.
         Returns: (title, body)
@@ -73,8 +87,12 @@ class MonitorService:
         # Build body with all event summaries
         event_details = "\n".join([f"  • {e['title']}: {e['summary']}" for e in events])
 
+        from datetime import datetime
+
+        local_ts = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
         body = (
             f"收到本地量化监控告警，请用中文给我一个简短、可执行的判断。\n\n"
+            f"时间: {local_ts}\n"
             f"市场: {self.symbol}\n"
             f"周期: {self.interval}\n"
             f"触发信号 ({len(events)}个):\n"
@@ -90,6 +108,9 @@ class MonitorService:
             f"- EMA21: {snap['ema_21']:.2f}\n"
             f"- Bollinger upper/mid/lower: {snap['bb_upper']:.2f} / {snap['bb_mid']:.2f} / {snap['bb_lower']:.2f}\n"
             f"- ATR14: {snap['atr_14']:.2f}\n"
+            f"- ADX14: {snap['adx_14']:.2f}\n"
+            f"- CCI20: {snap['cci_20']:.2f}\n"
+            f"- Stoch K/D: {snap['sto_k']:.2f}/{snap['sto_d']:.2f}\n"
             f"- Volume: {snap['volume']:.4f}\n"
             f"- Volume SMA20: {snap['volume_sma_20']:.4f}\n"
             f"- 1-bar change: {snap['close_change_1']:.2f}%\n"
@@ -131,7 +152,12 @@ class MonitorService:
             if events:
                 # Log all triggered signals
                 for event in events:
-                    LOG.info("Triggered [%s] %s: %s", self.symbol, event["title"], event["summary"])
+                    LOG.info(
+                        "Triggered [%s] %s: %s",
+                        self.symbol,
+                        event["title"],
+                        event["summary"],
+                    )
 
                 # Format and send a single consolidated message
                 title, body = self._format_message(events, snap)

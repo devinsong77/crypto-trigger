@@ -7,6 +7,7 @@ import logging
 import ssl
 import urllib.error
 import urllib.request
+from datetime import datetime
 from typing import Any, Dict, Optional
 
 LOG = logging.getLogger(__name__)
@@ -38,7 +39,7 @@ class OpenClawNotifier:
             "wakeMode": self.wake_mode,
             "deliver": self.deliver,
             "channel": self.channel,
-            "timeoutSeconds": self.timeout,
+            "timeoutSeconds": self.timeout
         }
         if self.to:
             payload["to"] = self.to

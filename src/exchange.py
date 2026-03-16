@@ -28,11 +28,12 @@ class BinanceSource:
 
     def fetch_backfill(self) -> List[Candle]:
         """Fetch historical klines from Binance REST API."""
-        url = (
-            f"{self.rest_base}/api/v3/klines?"
-            + urllib.parse.urlencode(
-                {"symbol": self.symbol, "interval": self.interval, "limit": self.backfill_limit}
-            )
+        url = f"{self.rest_base}/api/v3/klines?" + urllib.parse.urlencode(
+            {
+                "symbol": self.symbol,
+                "interval": self.interval,
+                "limit": self.backfill_limit,
+            }
         )
         req = urllib.request.Request(url, headers={"User-Agent": "btc-monitor/1.0"})
         with urllib.request.urlopen(req, timeout=10) as resp:

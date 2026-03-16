@@ -80,6 +80,47 @@ class RuleEngine:
                 return True, f"RSI(14)={value:.2f}，低于 {oversold}"
             return False, ""
 
+        if rtype == "adx_threshold":
+            value = snap.get("adx_14", math.nan)
+            threshold = float(rule.get("threshold", 25.0))
+            direction = rule.get("direction", "above")
+            if math.isnan(value):
+                return False, ""
+            if direction == "above" and value >= threshold:
+                return True, f"ADX(14)={value:.2f}，高于 {threshold}"
+            if direction == "below" and value <= threshold:
+                return True, f"ADX(14)={value:.2f}，低于 {threshold}"
+            return False, ""
+
+        if rtype == "cci_threshold":
+            value = snap.get("cci_20", math.nan)
+            overbought = rule.get("overbought")
+            oversold = rule.get("oversold")
+            if math.isnan(value):
+                return False, ""
+            if overbought is not None and value >= float(overbought):
+                return True, f"CCI(20)={value:.2f}，高于 {overbought}"
+            if oversold is not None and value <= float(oversold):
+                return True, f"CCI(20)={value:.2f}，低于 {oversold}"
+            return False, ""
+
+        if rtype == "stoch_cross":
+            k = snap.get("sto_k", math.nan)
+            d = snap.get("sto_d", math.nan)
+            if math.isnan(k) or math.isnan(d):
+                return False, ""
+            prev_snap = IndicatorEngine.snapshot(candles[:-1]) if len(candles) > 1 else None
+            if not prev_snap:
+                return False, ""
+            prev_k = prev_snap.get("sto_k", math.nan)
+            prev_d = prev_snap.get("sto_d", math.nan)
+            direction = rule.get("direction", "either")
+            if direction in ("bullish", "either") and prev_k <= prev_d < k:
+                return True, f"Stoch K 上穿 D ({prev_k:.2f}->{k:.2f})"
+            if direction in ("bearish", "either") and prev_k >= prev_d > k:
+                return True, f"Stoch K 下穿 D ({prev_k:.2f}->{k:.2f})"
+            return False, ""
+
         if rtype == "macd_cross":
             if len(closes) < 40:
                 return False, ""

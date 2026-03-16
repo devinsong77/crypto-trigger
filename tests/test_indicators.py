@@ -210,6 +210,33 @@ class TestROC(unittest.TestCase):
         self.assertTrue(math.isnan(result))
 
 
+class TestADXCCIStoch(unittest.TestCase):
+    """Test ADX / CCI / Stochastic indicators."""
+
+    def test_adx(self):
+        closings = list(range(1, 31))
+        highs = [x + 1 for x in closings]
+        lows = [x - 1 for x in closings]
+        result = IndicatorEngine.adx(highs, lows, closings, 14)
+        self.assertIsInstance(result, float)
+        self.assertGreaterEqual(result, 0.0)
+
+    def test_cci(self):
+        closings = list(range(1, 31))
+        highs = [x + 1 for x in closings]
+        lows = [x - 1 for x in closings]
+        result = IndicatorEngine.cci(highs, lows, closings, 20)
+        self.assertIsInstance(result, float)
+
+    def test_stoch(self):
+        closings = list(range(1, 30))
+        highs = [x + 1 for x in closings]
+        lows = [x - 1 for x in closings]
+        k, d = IndicatorEngine.stoch(highs, lows, closings, 14, 3, 3)
+        self.assertIsInstance(k, float)
+        self.assertIsInstance(d, float)
+
+
 class TestIndicatorSnapshot(unittest.TestCase):
     """Test indicator snapshot generation."""
 
@@ -239,6 +266,10 @@ class TestIndicatorSnapshot(unittest.TestCase):
             "bb_mid",
             "bb_lower",
             "atr_14",
+            "adx_14",
+            "cci_20",
+            "sto_k",
+            "sto_d",
             "volume",
             "volume_sma_20",
             "roc_12",
